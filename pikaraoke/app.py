@@ -75,7 +75,6 @@ babel.init_app(app)
 socketio.init_app(app)
 
 
-@babel.localeselector
 def get_locale():
     """Select the language to display the webpage in based on the Accept-Language header"""
     # Check config.ini lang settings
@@ -93,8 +92,23 @@ def get_locale():
     return locale
 
 
+babel.init_app(app, locale_selector=get_locale)
+
+
 # Handle all the socketio incoming events here.
 # TODO: figure out how to move to a blueprint file if this gets out of hand
+
+
+@socketio.on("seek")
+def handle_seek(data):
+    """Handle video seeking from remote controllers"""
+    socketio.emit("seek", data, namespace="/")
+
+
+@socketio.on("video_progress")
+def handle_video_progress(data):
+    """Broadcast video progress for seek slider updates"""
+    socketio.emit("video_progress", data, namespace="/")
 
 
 @socketio.on("end_song")
@@ -207,7 +221,9 @@ def main():
 
     k.upgrade_youtubedl()
 
-    server = WSGIServer(("0.0.0.0", int(args.port)), app, log=None, error_log=logging.getLogger())
+    server = WSGIServer(
+        ("0.0.0.0", int(args.port)), app, log=None, error_log=logging.getLogger()
+    )
     server.start()
 
     # Handle sigterm, apparently cherrypy won't shut down without explicit handling

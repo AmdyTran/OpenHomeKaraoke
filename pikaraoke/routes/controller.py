@@ -1,7 +1,7 @@
 import flask_babel
-from flask import Blueprint, redirect, request, url_for
+from flask import Blueprint, flash, redirect, request, url_for
 
-from pikaraoke.lib.current_app import broadcast_event, get_karaoke_instance
+from pikaraoke.lib.current_app import broadcast_event, get_karaoke_instance, is_admin
 
 _ = flask_babel.gettext
 
@@ -11,6 +11,11 @@ controller_bp = Blueprint("controller", __name__)
 
 @controller_bp.route("/skip")
 def skip():
+    if not is_admin():
+        # MSG: Error message shown when a non-admin user tries to skip a song
+        flash(_("Only admins can skip songs"), "is-danger")
+        return redirect(url_for("home.home"))
+
     k = get_karaoke_instance()
     broadcast_event("skip", "user command")
     k.skip()

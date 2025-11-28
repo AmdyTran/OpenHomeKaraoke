@@ -1,6 +1,9 @@
 {% extends 'base.html' %} {% block scripts %}
 <script>
   var volume = 0.85;
+  var videoDuration = 0;
+  var videoCurrentTime = 0;
+  var isSeeking = false;
 
   var socket = io();
 
@@ -75,6 +78,12 @@
     }
   }
 
+  function formatSeekTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return mins + ":" + (secs < 10 ? "0" : "") + secs;
+  }
+
   $(function () {
     $(".control-box").hide();
 
@@ -138,11 +147,24 @@
     $("#skip").click(function () {
       r = confirm(
         // {# MSG: Confirmation message when clicking a button to skip a track. #}
-        `{{ _("Are you sure you want to skip this track? If you didn't add this song, ask permission first!") }}`
+        `{{ _("Are you sure you want to skip this track?") }}`
       );
       if (r) {
         $.get("/skip");
       }
+    });
+
+    // Handle seek slider
+    $("#seek-slider").on("input", function() {
+      isSeeking = true;
+      const time = parseInt(this.value);
+      $("#seek-current").text(formatSeekTime(time));
+    });
+
+    $("#seek-slider").on("change", function() {
+      const time = parseInt(this.value);
+      socket.emit("seek", { time: time });
+      isSeeking = false;
     });
 
     $("#semitones-info").click(function () {
@@ -167,6 +189,22 @@
     loadNowPlaying();
     //for pushed updates to now playing state
     socket.on("now_playing", (np) => handleNowPlaying(np));
+    
+    // Handle video progress updates for seek slider
+    socket.on("video_progress", (data) => {
+      console.log("Received video_progress:", data);
+      if (!isSeeking) {
+        videoDuration = data.duration;
+        videoCurrentTime = data.currentTime;
+        const seekSlider = $("#seek-slider");
+        if (seekSlider.length && videoDuration > 0) {
+          seekSlider.attr("max", Math.floor(videoDuration));
+          seekSlider.val(Math.floor(videoCurrentTime));
+          $("#seek-current").text(formatSeekTime(videoCurrentTime));
+          $("#seek-duration").text(formatSeekTime(videoDuration));
+        }
+      }
+    });
 
     document.addEventListener("visibilitychange", function () {
       console.log("on visibility change");
@@ -241,6 +279,23 @@
       <i id="vol-up" class="icon icon-volume-up"></i>
     </div>
   </div>
+  <hr />
+  
+  {# MSG: Section for seeking through the current song #}
+  <div class="is-flex" style="justify-content: space-between; align-items: center">
+    <h4>{% trans %}Seek{% endtrans %}</h4>
+    <div class="timestamp is-size-7">
+      <span id="seek-current">0:00</span> / <span id="seek-duration">0:00</span>
+    </div>
+  </div>
+  <input
+    type="range"
+    min="0"
+    max="100"
+    value="0"
+    id="seek-slider"
+    style="width: 100%; margin: 5px 0 10px 0"
+  />
   <hr />
 
   {% if is_transpose_enabled %}

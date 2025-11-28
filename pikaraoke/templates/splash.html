@@ -53,6 +53,7 @@
   var volume = 0.85;
   var isScoreShown = false;
   var hasBgVideo = "{{ has_bg_video }}" == 'True'
+  var lastProgressEmit = 0;
 
   const scoreReviews = {
 	low:[
@@ -373,6 +374,15 @@
     });
     video.addEventListener("timeupdate", (e) => {
       $("#current").text(formatTime(video.currentTime));
+      // Broadcast current time for remote seek control (throttled to once per second)
+      const now = Date.now();
+      if (video.duration && (now - lastProgressEmit) > 1000) {
+        socket.emit("video_progress", {
+          currentTime: video.currentTime,
+          duration: video.duration
+        });
+        lastProgressEmit = now;
+      }
     });
 
     $("#video source")[0].addEventListener("error", (e) => {
@@ -393,6 +403,14 @@
       await bgMusic.load();
       await setTimeout(() => {}, 2500) // delay between songs
       await bgMusic.play();
+    });
+
+    // Handle seek command from remote
+    socket.on("seek", (data) => {
+      if (video && video.duration) {
+        video.currentTime = data.time;
+        console.log("Seeked to: " + data.time);
+      }
     });
 
     //make sure we end the song if the user closes the window or leaves page
