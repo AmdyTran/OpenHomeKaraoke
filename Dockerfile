@@ -1,12 +1,15 @@
 FROM python:3.12-slim
 
-# Install required packages
+# Install required packages including uv
 RUN apt-get update --allow-releaseinfo-change && \
     apt-get install -y --no-install-recommends ffmpeg wireless-tools curl unzip && \
     apt-get clean && \
     curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh -s -- -y && \
-    pip install poetry && \
+    curl -LsSf https://astral.sh/uv/install.sh | sh && \
     rm -rf /var/lib/apt/lists/*
+
+# Add uv to PATH
+ENV PATH="/root/.cargo/bin:$PATH"
 
 WORKDIR /app
 
@@ -14,11 +17,10 @@ WORKDIR /app
 COPY pyproject.toml ./
 COPY docs ./docs
 
-# Only install main dependencies for better docker caching
-RUN poetry install --only main --no-root
+# Install dependencies with uv (much faster than poetry)
+RUN uv pip install --system -e .
 
-# Copy the rest of the files and install the remaining deps in a separate layer
+# Copy the rest of the files
 COPY pikaraoke ./pikaraoke
-RUN poetry install
 
-ENTRYPOINT ["poetry", "run", "pikaraoke", "-d", "/app/pikaraoke-songs/", "--headless"]
+ENTRYPOINT ["python", "-m", "pikaraoke", "-d", "/app/pikaraoke-songs/", "--headless"]
