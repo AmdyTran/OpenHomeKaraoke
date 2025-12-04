@@ -120,6 +120,15 @@ def queue_edit():
             else:
                 # MSG: Message shown after failing to delete a song from the queue
                 flash(_("Error deleting from queue") + ": " + song, "is-danger")
+        elif action == "skip_to_front":
+            result = k.queue_edit(song, "skip_to_front")
+            if result:
+                # MSG: Message shown after moving a song to front of queue
+                flash(_("Moved to front of queue") + ": " + song, "is-success")
+                success = True
+            else:
+                # MSG: Message shown after failing to move a song to front
+                flash(_("Error moving to front") + ": " + song, "is-danger")
     if success:
         broadcast_event("queue_update")
     return redirect(url_for("queue.queue"))

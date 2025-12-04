@@ -137,9 +137,13 @@ class Karaoke:
         self.hide_splash_screen = hide_splash_screen
         self.download_path = download_path
         self.high_quality = self.get_user_preference("high_quality") or high_quality
-        self.splash_delay = self.get_user_preference("splash_delay") or int(splash_delay)
+        self.splash_delay = self.get_user_preference("splash_delay") or int(
+            splash_delay
+        )
         self.volume = self.get_user_preference("volume") or volume
-        self.normalize_audio = self.get_user_preference("normalize_audio") or normalize_audio
+        self.normalize_audio = (
+            self.get_user_preference("normalize_audio") or normalize_audio
+        )
         self.complete_transcode_before_play = (
             self.get_user_preference("complete_transcode_before_play")
             or complete_transcode_before_play
@@ -155,16 +159,28 @@ class Karaoke:
             self.get_user_preference("screensaver_timeout") or screensaver_timeout
         )
         self.prefer_hostname = prefer_hostname
-        self.disable_bg_music = self.get_user_preference("disable_bg_music") or disable_bg_music
-        self.bg_music_volume = self.get_user_preference("bg_music_volume") or bg_music_volume
-        self.bg_music_path = self.default_bg_music_path if bg_music_path == None else bg_music_path
-        self.disable_bg_video = self.get_user_preference("disable_bg_video") or disable_bg_video
-        self.bg_video_path = self.default_bg_video_path if bg_video_path == None else bg_video_path
+        self.disable_bg_music = (
+            self.get_user_preference("disable_bg_music") or disable_bg_music
+        )
+        self.bg_music_volume = (
+            self.get_user_preference("bg_music_volume") or bg_music_volume
+        )
+        self.bg_music_path = (
+            self.default_bg_music_path if bg_music_path == None else bg_music_path
+        )
+        self.disable_bg_video = (
+            self.get_user_preference("disable_bg_video") or disable_bg_video
+        )
+        self.bg_video_path = (
+            self.default_bg_video_path if bg_video_path == None else bg_video_path
+        )
         self.disable_score = self.get_user_preference("disable_score") or disable_score
         self.limit_user_songs_by = (
             self.get_user_preference("limit_user_songs_by") or limit_user_songs_by
         )
-        self.cdg_pixel_scaling = self.get_user_preference("cdg_pixel_scaling") or cdg_pixel_scaling
+        self.cdg_pixel_scaling = (
+            self.get_user_preference("cdg_pixel_scaling") or cdg_pixel_scaling
+        )
         self.avsync = self.get_user_preference("avsync") or avsync
         self.url_override = url
         self.url = self.get_url()
@@ -183,7 +199,9 @@ class Karaoke:
             # and doesn't have an IP yet (occurs when launched from /etc/rc.local)
             end_time = int(time.time()) + 30
             while int(time.time()) < end_time:
-                addresses_str = check_output(["hostname", "-I"]).strip().decode("utf-8", "ignore")
+                addresses_str = (
+                    check_output(["hostname", "-I"]).strip().decode("utf-8", "ignore")
+                )
                 addresses = addresses_str.split(" ")
                 self.ip = addresses[0]
                 if len(self.ip) < 7:
@@ -257,7 +275,9 @@ class Karaoke:
                 self.changed_preferences = True
             return [True, _("Your preferences were changed successfully")]
         except Exception as e:
-            logging.debug("Failed to change user preference << %s >>: %s", preference, e)
+            logging.debug(
+                "Failed to change user preference << %s >>: %s", preference, e
+            )
             return [False, _("Something went wrong! Your preferences were not changed")]
 
     def clear_preferences(self):
@@ -294,7 +314,9 @@ class Karaoke:
         return IP
 
     def upgrade_youtubedl(self):
-        logging.info("Upgrading youtube-dl, current version: %s" % self.youtubedl_version)
+        logging.info(
+            "Upgrading youtube-dl, current version: %s" % self.youtubedl_version
+        )
         self.youtubedl_version = upgrade_youtubedl(self.youtubedl_path)
         logging.info("Done. Installed version: %s" % self.youtubedl_version)
 
@@ -379,7 +401,9 @@ class Karaoke:
         if rc == 0:
             if enqueue:
                 # MSG: Message shown after the download is completed and queued
-                self.log_and_send(_("Downloaded and queued: %s" % displayed_title), "success")
+                self.log_and_send(
+                    _("Downloaded and queued: %s" % displayed_title), "success"
+                )
             else:
                 # MSG: Message shown after the download is completed but not queued
                 self.log_and_send(_("Downloaded: %s" % displayed_title), "success")
@@ -391,7 +415,9 @@ class Karaoke:
                     self.enqueue(s, user, log_action=False)
                 else:
                     # MSG: Message shown after the download is completed but the adding to queue fails
-                    self.log_and_send(_("Error queueing song: ") + displayed_title, "danger")
+                    self.log_and_send(
+                        _("Error queueing song: ") + displayed_title, "danger"
+                    )
         else:
             # MSG: Message shown after the download process is completed but the song is not found
             self.log_and_send(_("Error downloading song: ") + displayed_title, "danger")
@@ -409,7 +435,9 @@ class Karaoke:
                     logging.debug("adding song: " + file.name)
                     files_grabbed.append(file.as_posix())
 
-        self.available_songs = sorted(files_grabbed, key=lambda f: str.lower(os.path.basename(f)))
+        self.available_songs = sorted(
+            files_grabbed, key=lambda f: str.lower(os.path.basename(f))
+        )
 
     def delete(self, song_path):
         logging.info("Deleting song: " + song_path)
@@ -509,12 +537,17 @@ class Karaoke:
                 self.avsync,
                 self.cdg_pixel_scaling,
             )
-            self.ffmpeg_process = ffmpeg_cmd.run_async(pipe_stderr=True, pipe_stdin=True)
+            self.ffmpeg_process = ffmpeg_cmd.run_async(
+                pipe_stderr=True, pipe_stdin=True
+            )
 
             # ffmpeg outputs everything useful to stderr for some insane reason!
             # prevent reading stderr from being a blocking action
             self.ffmpeg_log = Queue()
-            t = Thread(target=enqueue_output, args=(self.ffmpeg_process.stderr, self.ffmpeg_log))
+            t = Thread(
+                target=enqueue_output,
+                args=(self.ffmpeg_process.stderr, self.ffmpeg_log),
+            )
             t.daemon = True
             t.start()
 
@@ -539,21 +572,29 @@ class Karaoke:
                     else:
                         is_transcoding_complete = True
                         output_file_size = os.path.getsize(fr.output_file)
-                        logging.debug(f"Transcoding complete. File size: {output_file_size}")
+                        logging.debug(
+                            f"Transcoding complete. File size: {output_file_size}"
+                        )
                         break
                 # Check if the file has buffered enough to start playback
                 try:
                     output_file_size = os.path.getsize(fr.output_file)
                     if not self.complete_transcode_before_play:
-                        is_buffering_complete = output_file_size > self.buffer_size * 1000
+                        is_buffering_complete = (
+                            output_file_size > self.buffer_size * 1000
+                        )
                         if is_buffering_complete:
-                            logging.debug(f"Buffering complete. File size: {output_file_size}")
+                            logging.debug(
+                                f"Buffering complete. File size: {output_file_size}"
+                            )
                             break
                 except:
                     pass
                 # Prevent infinite loop if playback never starts
                 if transcode_max_retries <= 0:
-                    logging.error("Max retries reached trying to play song. Skipping track")
+                    logging.error(
+                        "Max retries reached trying to play song. Skipping track"
+                    )
                     self.end_song()
                     break
                 transcode_max_retries -= 1
@@ -602,7 +643,9 @@ class Karaoke:
             logging.info(f"Reason: {reason}")
             if reason != "complete":
                 # MSG: Message shown when the song ends abnormally
-                self.send_notification(_("Song ended abnormally: %s") % reason, "danger")
+                self.send_notification(
+                    _("Song ended abnormally: %s") % reason, "danger"
+                )
         self.reset_now_playing()
         self.kill_ffmpeg()
         delete_tmp_dir()
@@ -610,7 +653,9 @@ class Karaoke:
 
     def transpose_current(self, semitones):
         # MSG: Message shown after the song is transposed, first is the semitones and then the song name
-        self.log_and_send(_("Transposing by %s semitones: %s") % (semitones, self.now_playing))
+        self.log_and_send(
+            _("Transposing by %s semitones: %s") % (semitones, self.now_playing)
+        )
         # Insert the same song at the top of the queue with transposition
         self.enqueue(self.now_playing_filename, self.now_playing_user, semitones, True)
         self.skip(log_action=False)
@@ -634,7 +679,12 @@ class Karaoke:
         return True if cont >= int(self.limit_user_songs_by) else False
 
     def enqueue(
-        self, song_path, user="Pikaraoke", semitones=0, add_to_front=False, log_action=True
+        self,
+        song_path,
+        user="Pikaraoke",
+        semitones=0,
+        add_to_front=False,
+        log_action=True,
     ):
         if self.is_song_in_queue(song_path):
             logging.warning("Song is already in queue, will not add: " + song_path)
@@ -655,16 +705,23 @@ class Karaoke:
             }
             if add_to_front:
                 # MSG: Message shown after the song is added to the top of the queue
-                self.log_and_send(_("%s added to top of queue: %s") % (user, queue_item["title"]))
+                self.log_and_send(
+                    _("%s added to top of queue: %s") % (user, queue_item["title"])
+                )
                 self.queue.insert(0, queue_item)
             else:
                 if log_action:
                     # MSG: Message shown after the song is added to the queue
-                    self.log_and_send(_("%s added to the queue: %s") % (user, queue_item["title"]))
+                    self.log_and_send(
+                        _("%s added to the queue: %s") % (user, queue_item["title"])
+                    )
                 self.queue.append(queue_item)
             self.update_queue_hash()
             self.update_now_playing_hash()
-            return [True, _("Song added to the queue: %s") % (self.filename_from_path(song_path))]
+            return [
+                True,
+                _("Song added to the queue: %s") % (self.filename_from_path(song_path)),
+            ]
 
     def queue_add_random(self, amount):
         logging.info("Adding %d random songs to queue" % amount)
@@ -708,7 +765,9 @@ class Karaoke:
             logging.error("Song not found in queue: " + song["file"])
         if action == "up":
             if index < 1:
-                logging.warning("Song is up next, can't bump up in queue: " + song["file"])
+                logging.warning(
+                    "Song is up next, can't bump up in queue: " + song["file"]
+                )
             else:
                 logging.info("Bumping song up in queue: " + song["file"])
                 del self.queue[index]
@@ -716,7 +775,9 @@ class Karaoke:
                 rc = True
         elif action == "down":
             if index == len(self.queue) - 1:
-                logging.warning("Song is already last, can't bump down in queue: " + song["file"])
+                logging.warning(
+                    "Song is already last, can't bump down in queue: " + song["file"]
+                )
             else:
                 logging.info("Bumping song down in queue: " + song["file"])
                 del self.queue[index]
@@ -726,6 +787,16 @@ class Karaoke:
             logging.info("Deleting song from queue: " + song["file"])
             del self.queue[index]
             rc = True
+        elif action == "skip_to_front":
+            if index < 1:
+                logging.warning("Song is already up next: " + song["file"])
+            else:
+                logging.info("Moving song to front of queue: " + song["file"])
+                del self.queue[index]
+                self.queue.insert(
+                    1, song
+                )  # Insert at position 1 (after currently playing)
+                rc = True
         else:
             logging.error("Unrecognized direction: " + action)
         if rc:
@@ -828,9 +899,9 @@ class Karaoke:
 
     def update_now_playing_hash(self):
         self.now_playing_hash = hashlib.md5(
-            json.dumps(self.get_now_playing(), sort_keys=True, ensure_ascii=True).encode(
-                "utf-8", "ignore"
-            )
+            json.dumps(
+                self.get_now_playing(), sort_keys=True, ensure_ascii=True
+            ).encode("utf-8", "ignore")
         ).hexdigest()
 
     def update_queue_hash(self):
@@ -853,7 +924,9 @@ class Karaoke:
                         while i < (self.splash_delay * 1000):
                             self.handle_run_loop()
                             i += self.loop_interval
-                        self.play_file(self.queue[0]["file"], self.queue[0]["semitones"])
+                        self.play_file(
+                            self.queue[0]["file"], self.queue[0]["semitones"]
+                        )
                 self.log_ffmpeg_output()
                 self.handle_run_loop()
             except KeyboardInterrupt:
