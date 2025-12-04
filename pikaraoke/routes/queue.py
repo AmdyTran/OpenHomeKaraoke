@@ -25,15 +25,41 @@ def queue():
     k = get_karaoke_instance()
     site_name = get_site_name()
     return render_template(
-        "queue.html", queue=k.queue, site_title=site_name, title="Queue", admin=is_admin()
+        "queue.html",
+        queue=k.queue,
+        site_title=site_name,
+        title="Queue",
+        admin=is_admin(),
     )
 
 
 @queue_bp.route("/get_queue")
 def get_queue():
+    from pikaraoke.lib.ffmpeg import get_media_duration
+
     k = get_karaoke_instance()
     if len(k.queue) >= 1:
-        return json.dumps(k.queue)
+        # Add duration and estimated wait time to each queue item
+        now_playing_remaining = 0
+        if k.now_playing_duration and k.is_playing:
+            # Estimate remaining time of current song (assuming it just started)
+            now_playing_remaining = k.now_playing_duration
+
+        cumulative_time = now_playing_remaining
+        enhanced_queue = []
+
+        for item in k.queue:
+            duration = get_media_duration(item["file"])
+            if duration is None:
+                duration = 180  # default 3 min if unknown
+            enhanced_item = item.copy()
+            enhanced_item["duration"] = duration
+            enhanced_item["wait_time"] = cumulative_time
+            enhanced_queue.append(enhanced_item)
+            cumulative_time += duration
+
+        return json.dumps(enhanced_queue)
+
     else:
         return json.dumps([])
 

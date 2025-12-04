@@ -39,32 +39,55 @@
     margin: 0;
   }
   ul.search_result_items li {
-    text-align: center;
-    margin-bottom: 1rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: all 0.2s ease;
   }
-  ul.search_result_items li:nth-child(odd) {
-    background-color: rgb(50, 55, 55);
+  ul.search_result_items li:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    border-color: var(--purple-600);
   }
   .search_result_items_meta {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem;
+    padding: 16px;
     text-align: left;
+    gap: 12px;
+  }
+  .search_result_items_meta > div {
+    flex: 1;
+    min-width: 0;
+    font-weight: 500;
+    color: var(--text-primary);
   }
   .search_result_items_download {
-    margin-left: 1rem;
+    flex-shrink: 0;
+  }
+  ul.search_result_items img {
+    width: 100%;
+    height: auto;
+    display: block;
   }
   @media screen and (min-width: 768px) {
-    ul.search_result_items img {
-      width: 30%;
-    }
     ul.search_result_items li {
       display: flex;
+      flex-direction: row;
+    }
+    ul.search_result_items img {
+      width: 200px;
+      height: 150px;
+      object-fit: cover;
+      flex-shrink: 0;
     }
     .search_result_items_meta {
-      align-items: start;
+      align-items: center;
       flex: 1;
+      min-width: 0;
     }
   }
 </style>
@@ -595,10 +618,13 @@
         value="{{url}}"
         data-index="{{loop.index0}}"
       >
-        <img src="https://img.youtube.com/vi/{{id}}/0.jpg" />
+        <img src="https://img.youtube.com/vi/{{id}}/0.jpg" alt="{{title}}" />
         <div class="search_result_items_meta">
-          {{title}}
-          <button class="button search_result_items_download">Download</button>
+          <div>{{title}}</div>
+          <button class="button btn-purple btn-touch search_result_items_download" style="display: inline-flex; align-items: center; gap: 8px;">
+            <i class="icon icon-download"></i>
+            <span>Download</span>
+          </button>
         </div>
       </li>
       {% endfor %}

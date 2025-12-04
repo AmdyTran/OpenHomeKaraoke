@@ -6,6 +6,14 @@
   var previousQueue;
   var socket = io();
 
+  function formatTime(seconds) {
+    if (!seconds || seconds < 0) return "Now";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    if (mins === 0) return secs + "s";
+    return mins + "m " + secs + "s";
+  }
+
   function getQueue() {
     $.get('{{ url_for("queue.get_queue") }}', function (data) {
       newQueue =  JSON.parse(data);
@@ -21,46 +29,89 @@
     var html = "";
     if (queue.length > 0) {
       queue.forEach((e, index) => {
+        const isFirst = index === 0;
+        const isLast = index + 1 === queue.length;
+        
         html += `
-          <tr value=${e.title}>
-            <td width="20px" style="padding: 5px 0px">${index + 1}</td>
-            {% if admin %}
-              <td width="20px" style="padding: 5px 0px">
-                <a
-                  class="up-button"
-                  href="/queue/edit?action=up&song=${encodeURIComponent(e.file)}"
-                  title="Move up in queue"
-                  ><i class="icon  icon-up-circled ${index == 0 && "is-hidden"}"></i>
-                </a>
-              </td>
-              <td width="20px" style="padding: 5px 0px">
-                <a
-                  class="down-button"
-                  href="/queue/edit?action=down&song=${encodeURIComponent(e.file)}"
-                  title="Move down in queue"
-                  ><i class="icon  icon-down-circled ${index + 1 == queue.length && "is-hidden"}"></i>
-                </a>
-              </td>
-            {% endif %}
-            <td style="padding-left: 10px"><b class="is-hidden-tablet has-text-success">${e.user}: </b> ${e.title}</td>
-            <td style="padding-left: 5px" class="queue-user is-hidden-mobile has-text-success"><b>${e.user}</b></td>
-            {% if admin %}
-              <td width="20px">
-                <a
-                  class="delete-button confirm-delete has-text-danger"
-                  title="${e.title}"
-                  href="/queue/edit?action=delete&song=${encodeURIComponent(e.file)}"
-                  ><i class="icon icon-trash-empty"></i>
-                </a>
-              </td>
-            {% endif %}
-          </tr>
+          <div class="card-modern ${isFirst ? 'now-playing-section' : ''} relative">
+            <div class="flex items-center gap-3">
+              <!-- Position Badge -->
+              <div class="badge-circle ${isFirst ? 'badge-purple' : 'badge-gray'} text-xs">
+                ${index + 1}
+              </div>
+              
+              <!-- Song Info -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1 flex-wrap">
+                  ${isFirst ? '<span class="status-playing">Now Playing</span>' : ''}
+                  <span class="md:hidden text-xs opacity-75">
+                    ${e.user}
+                  </span>
+                </div>
+                <h3 class="font-medium mb-1 text-xs md:text-sm ${isFirst ? 'text-white' : 'text-gray-900 dark:text-gray-100'}" style="word-wrap: break-word; overflow-wrap: break-word; line-height: 1.3;">
+                  ${e.title}
+                </h3>
+                <div class="flex items-center gap-1.5 text-[10px] md:text-xs flex-wrap ${isFirst ? 'text-white/90' : 'text-gray-600 dark:text-gray-400'}">
+                  <span class="icon-with-text hidden md:inline-flex">
+                    <i class="icon icon-user" style="font-size: 10px;"></i>
+                    <span>${e.user}</span>
+                  </span>
+                  <span class="icon-with-text ${isFirst ? 'text-white/90' : 'text-blue-600 dark:text-blue-400'}">
+                    <i class="icon icon-clock" style="font-size: 9px;"></i>
+                    <span class="text-[9px] md:text-[10px]">${e.wait_time !== undefined ? formatTime(e.wait_time) : 'Now'}</span>
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Action Buttons -->
+              <div class="flex items-center gap-2 flex-shrink-0">
+                {% if admin %}
+                  <!-- Move Up Button -->
+                  ${!isFirst ? `
+                    <a
+                      class="up-button btn-icon-circle bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
+                      href="/queue/edit?action=up&song=${encodeURIComponent(e.file)}"
+                      title="Move up in queue"
+                    >
+                      <i class="icon icon-up-circled"></i>
+                    </a>
+                  ` : ''}
+                  
+                  <!-- Move Down Button -->
+                  ${!isLast ? `
+                    <a
+                      class="down-button btn-icon-circle bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
+                      href="/queue/edit?action=down&song=${encodeURIComponent(e.file)}"
+                      title="Move down in queue"
+                    >
+                      <i class="icon icon-down-circled"></i>
+                    </a>
+                  ` : ''}
+                  
+                  <!-- Delete Button -->
+                  <a
+                    class="delete-button confirm-delete btn-icon-circle bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400"
+                    title="${e.title}"
+                    href="/queue/edit?action=delete&song=${encodeURIComponent(e.file)}"
+                  >
+                    <i class="icon icon-trash-empty"></i>
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
         `
       });
     }
     else {
       // {# MSG: Placeholder text which appears instead of a song when the queue is empty. #}
-      html += `<tr><td><p class="has-text-warning">{{ _('The queue is empty') }}</p></td></tr>`
+      html += `
+        <div class="card-modern text-center py-12 px-4">
+          <i class="icon icon-music text-5xl text-gray-400 dark:text-gray-500 mb-4 block"></i>
+          <p class="text-gray-600 dark:text-gray-300 text-base mb-2">{{ _('The queue is empty') }}</p>
+          <p class="text-gray-500 dark:text-gray-400 text-sm">Search for songs to add them to the queue</p>
+        </div>
+      `
     }
     return html;
   }
@@ -133,21 +184,34 @@
 
 {% block content %}
 
-<table class="table is-striped" id="auto-refresh" style="margin-bottom: 30px">
-</table>
+<div id="auto-refresh" class="touch-spacing" style="margin-bottom: 30px">
+</div>
 
 {% if admin %}
-<a class="add-random has-text-success" href="#"
-  {# MSG: Button text which picks a given number of random songs from the already downloaded songs and adds them to the queue. #}
-  ><i class="icon icon-plus-circled"></i></a
->{% trans %}Add <input id="randomNumberInput" pattern="\d*" maxlength="2" value="3" min="1" max="99" style="width: 40px" /> random songs{% endtrans %}
-<a
-  class="confirm-clear has-text-danger is-pulled-right"
-  href="/queue/edit?action=clear"
-  {# MSG: Text for the button which clears the entire queue. #}
-  ><i class="icon icon-trash-empty"></i>{% trans %}Clear all{% endtrans %}</a
-><br />
-
+<div class="card-modern" style="background: var(--gray-50); border: 1px solid var(--gray-200);">
+  <div class="flex items-center justify-between" style="flex-wrap: wrap; gap: 12px;">
+    <div class="flex items-center gap-2">
+      <a class="add-random button is-success btn-touch" href="#" style="display: inline-flex; align-items: center; gap: 8px;">
+        <i class="icon icon-plus-circled"></i>
+        <span>
+          {# MSG: Button text which picks a given number of random songs from the already downloaded songs and adds them to the queue. #}
+          {% trans %}Add{% endtrans %}
+          <input id="randomNumberInput" pattern="\d*" maxlength="2" value="3" min="1" max="99" style="width: 45px; text-align: center; margin: 0 4px;" />
+          {% trans %}random songs{% endtrans %}
+        </span>
+      </a>
+    </div>
+    <a
+      class="confirm-clear button is-danger btn-touch"
+      href="/queue/edit?action=clear"
+      style="display: inline-flex; align-items: center; gap: 8px;"
+    >
+      <i class="icon icon-trash-empty"></i>
+      {# MSG: Text for the button which clears the entire queue. #}
+      <span>{% trans %}Clear all{% endtrans %}</span>
+    </a>
+  </div>
+</div>
 {% endif %}
 
 {% endblock %}

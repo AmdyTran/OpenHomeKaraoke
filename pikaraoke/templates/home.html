@@ -233,40 +233,69 @@
 </h1>
 {% endblock %} {% block content %}
 
-<p class="is-size-4 has-text-warning" id="now-playing">&nbsp;</p>
+<!-- Now Playing Card -->
+<div class="card-modern now-playing-section">
+  <div class="flex items-center gap-3 mb-3">
+    <div class="bg-white/20 rounded-full p-2 flex items-center justify-center">
+      <i class="icon icon-music text-white text-lg"></i>
+    </div>
+    <h3 class="font-semibold text-white text-xs uppercase tracking-wider">
+      {# MSG: Header showing the currently playing song. #}
+      {% trans %}Now Playing{% endtrans %}
+    </h3>
+  </div>
+  <p class="text-white text-base font-medium leading-relaxed" id="now-playing">&nbsp;</p>
+</div>
 
-<hr />
-<h3>
-  {# MSG: Title for the section displaying the next song to be played. #} {%
-  trans %}Next Song{% endtrans %}
-</h3>
-<p id="up-next" class="has-text-warning"></p>
-<hr />
+<!-- Up Next Card -->
+<div class="card-modern">
+  <div class="flex items-center gap-3 mb-3">
+    <div class="bg-gray-100 dark:bg-gray-700 rounded-full p-2 flex items-center justify-center">
+      <i class="icon icon-right-open text-gray-600 dark:text-gray-300 text-base"></i>
+    </div>
+    <h3 class="font-medium text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wider">
+      {# MSG: Title for the section displaying the next song to be played. #}
+      {% trans %}Next Song{% endtrans %}
+    </h3>
+  </div>
+  <p id="up-next" class="text-gray-900 dark:text-gray-100 text-sm leading-relaxed">&nbsp;</p>
+</div>
 
 {% if admin %}
-<div
-  class="has-background-black-bis box control-box"
-  style="max-width: 500px; display: none"
->
-  {# MSG: Title of the box with controls such as pause and skip. #}
-  <h4>{% trans %}Player Control{% endtrans %}</h4>
-  <div class="is-size-3" style="display: flex; justify-content: space-between">
-    <div class="is-size-3">
+<!-- Admin Controls Card -->
+<div class="card-modern control-box bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hidden">
+  <div class="flex items-center gap-3 mb-4">
+    <div class="bg-purple-600 dark:bg-purple-900/30 rounded-full p-2 flex items-center justify-center">
+      <i class="icon icon-sliders text-white dark:text-purple-400 text-base"></i>
+    </div>
+    <h3 class="font-bold text-gray-900 dark:text-gray-100 text-sm uppercase tracking-wider">
+      {# MSG: Title of the box with controls such as pause and skip. #}
+      {% trans %}Player Control{% endtrans %}
+    </h3>
+  </div>
+  
+  <!-- Playback Controls -->
+  <div class="flex justify-between items-center flex-wrap gap-3 mb-4">
+    <div class="flex gap-2">
       {# MSG: Title attribute on the button to restart the current song. #}
-      <a title="{{ _('Restart Song') }}" id="restart"
-        ><i class="icon icon-to-start"></i> </a
-      >&nbsp;&nbsp; {# MSG: Title attribute on the button to play or pause the
-      current song. #}
-      <a title="{{ _('Play/Pause') }}"
-        ><i id="pause-resume" class="icon icon-pause"></i> </a
-      >&nbsp;&nbsp; {# MSG: Title attribute on the button to skip to the next
-      song. #}
-      <a title="{{ _('Stop Current Song') }}" id="skip"
-        ><i class="icon icon-to-end"></i>
+      <a title="{{ _('Restart Song') }}" id="restart" class="btn-icon-circle bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 text-xl transition-colors">
+        <i class="icon icon-to-start"></i>
+      </a>
+      {# MSG: Title attribute on the button to play or pause the current song. #}
+      <a title="{{ _('Play/Pause') }}" class="btn-icon-circle btn-purple text-xl hover:bg-primary-700 transition-colors">
+        <i id="pause-resume" class="icon icon-pause"></i>
+      </a>
+      {# MSG: Title attribute on the button to skip to the next song. #}
+      <a title="{{ _('Stop Current Song') }}" id="skip" class="btn-icon-circle bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 text-xl transition-colors">
+        <i class="icon icon-to-end"></i>
       </a>
     </div>
-    <div class="is-size-3" style="display: flex; align-items: center">
-      <i id="vol-down" class="icon icon-volume-down"></i>
+    
+    <!-- Volume Control -->
+    <div class="flex items-center gap-2 bg-white dark:bg-gray-700 px-3 py-2 rounded-full shadow-sm">
+      <a id="vol-down" class="btn-icon-circle w-9 h-9 min-w-[36px] bg-transparent text-gray-800 dark:text-gray-300 text-xl hover:text-purple-600 dark:hover:text-white transition-colors">
+        <i class="icon icon-volume-down"></i>
+      </a>
       <input
         type="range"
         min="0"
@@ -274,62 +303,65 @@
         value="0.85"
         step="0.025"
         id="volume-slider"
-        style="margin: 0 8px 0px 5px; width: 100px"
+        class="w-24"
       />
-      <i id="vol-up" class="icon icon-volume-up"></i>
+      <a id="vol-up" class="btn-icon-circle w-9 h-9 min-w-[36px] bg-transparent text-gray-800 dark:text-gray-300 text-xl hover:text-purple-600 dark:hover:text-white transition-colors">
+        <i class="icon icon-volume-up"></i>
+      </a>
     </div>
   </div>
-  <hr />
   
-  {# MSG: Section for seeking through the current song #}
-  <div class="is-flex" style="justify-content: space-between; align-items: center">
-    <h4>{% trans %}Seek{% endtrans %}</h4>
-    <div class="timestamp is-size-7">
-      <span id="seek-current">0:00</span> / <span id="seek-duration">0:00</span>
+  <!-- Seek Control -->
+  <div class="bg-white dark:bg-gray-700 p-4 rounded-xl mb-4">
+    <div class="flex justify-between items-center mb-3">
+      <h4 class="font-bold text-gray-900 dark:text-gray-200 text-xs uppercase tracking-wider">
+        {# MSG: Section for seeking through the current song #}
+        {% trans %}Seek{% endtrans %}
+      </h4>
+      <div class="text-xs text-gray-900 dark:text-gray-300 font-semibold">
+        <span id="seek-current">0:00</span> / <span id="seek-duration">0:00</span>
+      </div>
     </div>
+    <input
+      type="range"
+      min="0"
+      max="100"
+      value="0"
+      id="seek-slider"
+      class="w-full"
+    />
   </div>
-  <input
-    type="range"
-    min="0"
-    max="100"
-    value="0"
-    id="seek-slider"
-    style="width: 100%; margin: 5px 0 10px 0"
-  />
-  <hr />
 
   {% if is_transpose_enabled %}
-  <div class="is-flex" style="justify-content: space-between">
-    <div>
-      {# MSG: Title of a control to change the key/pitch of the playing song. #}
-      <h4>{% trans %}Change Key{% endtrans %}</h4>
+  <!-- Transpose Control -->
+  <div class="bg-white dark:bg-gray-700 p-4 rounded-xl">
+    <div class="flex justify-between items-center mb-3">
+      <h4 class="font-bold text-gray-900 dark:text-gray-200 text-xs uppercase tracking-wider">
+        {# MSG: Title of a control to change the key/pitch of the playing song. #}
+        {% trans %}Change Key{% endtrans %}
+      </h4>
+      <div class="flex items-center gap-2">
+        <span id="semitones-label" class="font-bold text-gray-900 dark:text-gray-100"></span>
+        <a id="semitones-info" class="btn-icon-circle w-8 h-8 min-w-[32px] bg-gray-100 hover:bg-gray-200 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-600 dark:text-gray-300 text-base transition-colors">
+          <i class="icon icon-info-circled-1" title="Info"></i>
+        </a>
+      </div>
     </div>
-    <div class="is-flex">
-      <h4 id="semitones-label"></h4>
-      <a id="semitones-info">
-        <i class="icon icon-info-circled-1" title="Info"></i
-      ></a>
-    </div>
-  </div>
-  <div style="width: 100%">
-    <div class="is-flex">
+    <div class="flex items-center gap-3">
       <input
         type="range"
         min="-12"
         max="12"
         value="0"
-        width="300px"
-        class="transpose-slider"
+        class="transpose-slider flex-1"
         id="transpose"
-        style="width: 100%"
       />
       <button
         id="submit-transpose"
-        class="button is-rounded is-small"
-        style="margin-left: 10px"
+        class="button is-success btn-touch whitespace-nowrap hover:opacity-90 transition-opacity"
       >
-        {# MSG: Label on the button to confirm the change in key/pitch of the
-        playing song. #} {% trans %}Change{% endtrans %}
+        {# MSG: Label on the button to confirm the change in key/pitch of the playing song. #}
+        {% trans %}Change{% endtrans %}
       </button>
     </div>
   </div>

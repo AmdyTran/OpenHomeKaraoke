@@ -3,6 +3,7 @@
   display: inline-block;
   width: 90%;
 }
+
 .custom-combobox-toggle {
   position: absolute;
   top: 0;
@@ -10,16 +11,20 @@
   margin-left: -1px;
   padding: 0;
 }
+
 .custom-combobox-input {
   border-top-right-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
 }
+
 #notification {
   margin-bottom: 0;
 }
+
 #brand {
   margin-left: 0;
 }
+
 #menu {
   margin-right: 0;
 }
@@ -35,6 +40,7 @@
 .pagination {
   margin-bottom: 7px;
 }
+
 .pagination-page-info {
   padding: 0;
   width: 100%;
@@ -42,26 +48,31 @@
   margin-left: 0;
   font-size: 12px;
 }
+
 .pagination-page-info b {
   color: black;
   background: #6aa6ed;
   padding-right: 5px;
   font-size: 150%;
 }
+
 .pagination-list {
   list-style: none !important;
   margin-top: 0px !important;
   margin-left: 0px !important;
   margin-bottom: 0px !important;
 }
+
 .pagination-list li {
   margin-top: 0px !important;
 }
+
 .pagination-previous,
 .pagination-next {
   margin-top: 0px !important;
   margin-bottom: 0px !important;
 }
+
 .pagination-page-info b {
   color: white;
   background-color: transparent;
@@ -79,10 +90,357 @@ table {
 }
 
 .break-word {
-  overflow-wrap: break-word; /* Renamed property in CSS3 draft spec */
+  overflow-wrap: break-word;
+  /* Renamed property in CSS3 draft spec */
   width: 100%;
 }
 
 body.hide-cursor * {
   cursor: none !important;
+}
+
+/* Enhanced body styling for dark mode */
+body {
+  background: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%);
+  min-height: 100vh;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+  }
+}
+
+/* ===================================
+   Modern UI Improvements - Dark Mode Compatible
+   =================================== */
+
+:root {
+  --purple-50: #faf5ff;
+  --purple-100: #f3e8ff;
+  --purple-600: #8b5cf6;
+  --purple-700: #7c3aed;
+  --purple-800: #6d28d9;
+
+  /* Light mode */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+  --border-color: #e5e7eb;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+
+  --blue-50: #eff6ff;
+  --blue-600: #2563eb;
+  --green-100: #dcfce7;
+  --green-800: #166534;
+  --red-600: #dc2626;
+  --red-50: #fef2f2;
+}
+
+/* Dark mode color overrides */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1f2937;
+    --bg-secondary: #111827;
+    --bg-tertiary: #374151;
+    --border-color: #4b5563;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --text-tertiary: #9ca3af;
+  }
+}
+
+/* Card styles - Dark mode compatible */
+.card-modern {
+  background: var(--bg-primary);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.card-modern:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  border-color: var(--purple-600);
+}
+
+/* Badge styles - Dark mode compatible */
+.badge-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.badge-purple {
+  background-color: var(--purple-600);
+  color: white;
+}
+
+.badge-gray {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+/* Button improvements */
+.btn-icon-circle {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.btn-purple {
+  background-color: var(--purple-600);
+  color: white;
+  border: none;
+}
+
+.btn-purple:hover {
+  background-color: var(--purple-700);
+  color: white;
+}
+
+.btn-touch {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 12px 20px;
+}
+
+/* Status indicators - Dark mode compatible */
+.status-playing {
+  background-color: #10b981;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+}
+
+.status-playing::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: white;
+  margin-right: 6px;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* User song highlight */
+.user-song-highlight {
+  background-color: rgba(37, 99, 235, 0.1);
+  border-left: 4px solid var(--blue-600);
+}
+
+/* Now playing section - Dark mode compatible */
+.now-playing-section {
+  background: linear-gradient(135deg, var(--purple-600) 0%, var(--purple-700) 100%);
+  border: 1px solid var(--purple-600);
+  padding: 16px;
+  margin-bottom: 16px;
+  color: white;
+}
+
+.now-playing-section * {
+  color: white !important;
+}
+
+/* Touch-friendly spacing */
+.touch-spacing>*+* {
+  margin-top: 12px;
+}
+
+/* Icon text alignment */
+.icon-with-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Truncate text helper */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Flex helpers */
+.flex {
+  display: flex;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.gap-3 {
+  gap: 12px;
+}
+
+.gap-4 {
+  gap: 16px;
+}
+
+/* Text helpers - Dark mode compatible */
+.text-sm {
+  font-size: 14px;
+}
+
+.text-base {
+  font-size: 16px;
+}
+
+.text-xs {
+  font-size: 12px;
+}
+
+.text-gray-500 {
+  color: var(--text-tertiary);
+}
+
+.text-gray-600 {
+  color: var(--text-secondary);
+}
+
+.text-gray-900 {
+  color: var(--text-primary);
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+/* Range slider styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--gray-200);
+  border-radius: 5px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--purple-600);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--purple-600);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: var(--purple-700);
+  transform: scale(1.1);
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  background: var(--purple-700);
+  transform: scale(1.1);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .card-modern {
+    border-radius: 8px;
+    padding: 12px;
+  }
+
+  .btn-touch {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .btn-icon-circle {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+  }
+
+  /* Ensure adequate spacing on mobile */
+  .touch-spacing>*+* {
+    margin-top: 16px;
+  }
+
+  /* Larger touch targets for range sliders on mobile */
+  input[type="range"]::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+  }
 }

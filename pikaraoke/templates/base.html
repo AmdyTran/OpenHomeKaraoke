@@ -8,6 +8,26 @@
   <title>{{site_title}}</title>
   {% endif %}
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#faf5ff',
+              100: '#f3e8ff',
+              500: '#a855f7',
+              600: '#8b5cf6',
+              700: '#7c3aed',
+              800: '#6d28d9',
+            }
+          }
+        }
+      }
+    }
+  </script>
   <script type=text/javascript src="{{  url_for('static', filename='jquery-3.3.1.min.js') }}"></script>
   <script src="{{  url_for('static', filename='js.cookie-2.2.1.min.js') }}"></script>
   <script src="{{  url_for('static', filename='lodash.min.js') }}"></script>
@@ -161,7 +181,59 @@
     right: 10px;
   }
   tr:nth-child(even) {
-    background-color: rgb(50, 55, 55);
+    background-color: rgba(50, 55, 55, 0.5);
+  }
+  
+  /* Modern navbar styling */
+  .navbar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(229, 231, 235, 0.8);
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .navbar {
+      background: rgba(31, 41, 55, 0.95) !important;
+      border-color: rgba(75, 85, 99, 0.8);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+  }
+  
+  .navbar-item {
+    color: #4b5563 !important;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    margin: 0 2px;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .navbar-item {
+      color: #d1d5db !important;
+    }
+  }
+  
+  .navbar-item:hover {
+    background-color: rgba(139, 92, 246, 0.1) !important;
+    color: #8b5cf6 !important;
+  }
+  
+  .navbar-item.is-active {
+    background-color: #8b5cf6 !important;
+    color: white !important;
+  }
+  
+  /* Content box styling */
+  .box {
+    background: var(--bg-primary) !important;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+  }
+  
+  .title {
+    color: var(--text-primary) !important;
   }
   @media screen and (max-width: 1088px) {
     .navbar-brand > .navbar-item > span {
@@ -187,8 +259,8 @@
 <body>
 
   {% if not blank_page %}
-  <div class="container" style="padding: 5px; max-width: 900px;">
-    <nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="container px-2 py-4 max-w-4xl mx-auto">
+    <nav class="navbar sticky top-2 z-30 mb-4" role="navigation" aria-label="main navigation">
       <div class="navbar-brand" id="brand" style="padding-left: 10px">
         <a id="home" class="navbar-item" href="{{ url_for('home.home') }}">
           <i class="icon icon-home-2" title="Home"></i>
@@ -246,8 +318,8 @@
       <div class="flash"></div>
     </div>
 
-    <div class="box" style="margin-top: 5px;">
-      <header class="title">
+    <div class="box p-6">
+      <header class="title mb-6">
         {% block header %}{% endblock %}
       </header>
       <div class="content">

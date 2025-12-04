@@ -105,33 +105,51 @@
   {% endfor %}
 </div>
 
-{{ pagination.links }} {{ pagination.info }}
-<table>
+{{ pagination.links }} 
+<div style="margin: 16px 0; color: var(--gray-600);">{{ pagination.info }}</div>
+
+<div class="touch-spacing">
   {% for song in songs %}
-  <tr value="{{ song }}">
-    <td style="padding: 5px 0px">{{loop.index + pagination.skip}}</td>
-    <td id="{{filename_from_path(song)[0].lower()}}" style="padding-right: 0">
-      <a
-        class="add-song-link has-text-weight-bold has-text-success"
-        title="Add '{{filename_from_path(song)}}' to queue"
-        href="{{url_for('queue.enqueue')}}?song={{url_escape(song.encode('utf-8','surrogateescape'))}}&user="
-        ><i class="icon icon-list-add"></i><span class="is-hidden-mobile"> Add</span>
-      </a>
-    </td>
-    <td class="break-word" style="padding-right: 0">
-      {{filename_from_path(song)}}
-    </td>
-    {% if admin %}
-    <td style="padding-right: 0">
-      <a
-        class="edit-button"
-        href="{{url_for('files.edit_file')}}?song={{url_escape(song.encode('utf-8','surrogateescape'))}}"
-        title="Edit song"
-        ><i class="icon icon-edit-1"></i>
-      </a>
-    </td>
-    {% endif %} {% endfor %}
-  </tr>
-</table>
+  <div class="card-modern" id="{{filename_from_path(song)[0].lower()}}">
+    <div class="flex items-center gap-3">
+      <!-- Position Badge -->
+      <div class="badge-circle badge-gray text-[10px] md:text-xs">
+        {{loop.index + pagination.skip}}
+      </div>
+      
+      <!-- Song Title -->
+      <div class="flex-1 min-w-0">
+        <h3 class="font-medium text-xs md:text-sm text-gray-900 dark:text-gray-100 break-words">
+          {{filename_from_path(song)}}
+        </h3>
+      </div>
+      
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <!-- Add to Queue Button -->
+        <a
+          class="add-song-link button btn-purple btn-touch inline-flex items-center gap-1 md:gap-2 whitespace-nowrap hover:bg-primary-700 transition-colors text-xs md:text-sm px-3 py-2"
+          title="Add '{{filename_from_path(song)}}' to queue"
+          href="{{url_for('queue.enqueue')}}?song={{url_escape(song.encode('utf-8','surrogateescape'))}}&user="
+        >
+          <i class="icon icon-list-add text-sm"></i>
+          <span>Add</span>
+        </a>
+        
+        {% if admin %}
+        <!-- Edit Button -->
+        <a
+          class="edit-button btn-icon-circle bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors"
+          href="{{url_for('files.edit_file')}}?song={{url_escape(song.encode('utf-8','surrogateescape'))}}"
+          title="Edit song"
+        >
+          <i class="icon icon-edit-1"></i>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
 
 {{ pagination.links }} {% endblock %}
